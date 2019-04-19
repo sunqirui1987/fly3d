@@ -1,0 +1,10 @@
+package meshs
+
+// Constants
+const (
+	BILLBOARDMODE_NONE = 0
+	BILLBOARDMODE_X    = 1
+	BILLBOARDMODE_Y    = 2
+	BILLBOARDMODE_Z    = 4
+	BILLBOARDMODE_ALL  = 7
+)
