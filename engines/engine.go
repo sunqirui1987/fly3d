@@ -2,6 +2,11 @@ package engines
 
 import (
 	"encoding/binary"
+	"image"
+	"reflect"
+
+	log "github.com/sirupsen/logrus"
+
 	"github.com/suiqirui1987/fly3d/core"
 	"github.com/suiqirui1987/fly3d/gl"
 	"github.com/suiqirui1987/fly3d/gl/glutil"
@@ -10,10 +15,6 @@ import (
 	"github.com/suiqirui1987/fly3d/tools"
 	"github.com/suiqirui1987/fly3d/tools/resize"
 	"github.com/suiqirui1987/fly3d/windows"
-	"fmt"
-	"image"
-	"log"
-	"reflect"
 
 	"golang.org/x/mobile/exp/f32"
 )
@@ -326,7 +327,7 @@ func (this *Engine) BindBuffers(vertexBuffer *gl.GLVertexBuffer, indexBuffer *gl
 	}
 
 	if err := gl.GetError(); err != 0 {
-		fmt.Printf("Draw gl error: %v \r\n", err)
+		log.Printf("Draw gl error: %v \r\n", err)
 	}
 }
 
@@ -357,7 +358,7 @@ func (this *Engine) BindMultiBuffers(vertexBuffers map[string]*gl.GLVertexBuffer
 	}
 
 	if err := gl.GetError(); err != 0 {
-		fmt.Printf("BindMultiBuffers gl error: %v \r\n", err)
+		log.Printf("BindMultiBuffers gl error: %v \r\n", err)
 	}
 }
 
@@ -387,7 +388,7 @@ func (this *Engine) Draw(useTriangles bool, indexStart, indexCount int) {
 	gl.DrawElements(gltype, indexCount, gl.UNSIGNED_SHORT, indexStart*2)
 
 	if err := gl.GetError(); err != 0 {
-		fmt.Printf("Draw gl error: %v \r\n", err)
+		log.Printf("Draw gl error: %v \r\n", err)
 	}
 }
 
@@ -457,6 +458,7 @@ func (this *Engine) EnableEffect(effect IEffect) {
 
 func (this *Engine) SetMatrix(uniform gl.Uniform, m *math32.Matrix4) {
 	if !uniform.Valid() {
+		log.Println("SetMatrix uniform.Valid Failed")
 		return
 	}
 	gl.UniformMatrix4fv(uniform, m.ToArray32())
@@ -464,6 +466,7 @@ func (this *Engine) SetMatrix(uniform gl.Uniform, m *math32.Matrix4) {
 
 func (this *Engine) SetVector2(uniform gl.Uniform, v *math32.Vector2) {
 	if !uniform.Valid() {
+		log.Println("SetVector2 uniform.Valid Failed")
 		return
 	}
 	gl.Uniform2f(uniform, v.X, v.Y)
@@ -471,6 +474,7 @@ func (this *Engine) SetVector2(uniform gl.Uniform, v *math32.Vector2) {
 
 func (this *Engine) SetVector3(uniform gl.Uniform, v *math32.Vector3) {
 	if !uniform.Valid() {
+		log.Println("SetVector3 uniform.Valid Failed")
 		return
 	}
 	gl.Uniform3f(uniform, v.X, v.Y, v.Z)
@@ -478,6 +482,7 @@ func (this *Engine) SetVector3(uniform gl.Uniform, v *math32.Vector3) {
 
 func (this *Engine) SetFloat2(uniform gl.Uniform, x, y float32) {
 	if !uniform.Valid() {
+		log.Println("SetFloat2 uniform.Valid Failed")
 		return
 	}
 	gl.Uniform2f(uniform, x, y)
@@ -485,6 +490,7 @@ func (this *Engine) SetFloat2(uniform gl.Uniform, x, y float32) {
 
 func (this *Engine) SetFloat3(uniform gl.Uniform, x, y, z float32) {
 	if !uniform.Valid() {
+		log.Println("SetFloat3 uniform.Valid Failed")
 		return
 	}
 	gl.Uniform3f(uniform, x, y, z)
@@ -492,6 +498,7 @@ func (this *Engine) SetFloat3(uniform gl.Uniform, x, y, z float32) {
 
 func (this *Engine) SetBool(uniform gl.Uniform, b bool) {
 	if !uniform.Valid() {
+		log.Println("SetBool uniform.Valid Failed")
 		return
 	}
 	bval := 0
@@ -503,6 +510,7 @@ func (this *Engine) SetBool(uniform gl.Uniform, b bool) {
 
 func (this *Engine) SetFloat4(uniform gl.Uniform, x, y, z, w float32) {
 	if !uniform.Valid() {
+		log.Println("SetFloat4 uniform.Valid Failed")
 		return
 	}
 	gl.Uniform4f(uniform, x, y, z, w)
@@ -510,6 +518,7 @@ func (this *Engine) SetFloat4(uniform gl.Uniform, x, y, z, w float32) {
 
 func (this *Engine) SetColor3(uniform gl.Uniform, v *math32.Color3) {
 	if !uniform.Valid() {
+		log.Println("SetColor3 uniform.Valid Failed")
 		return
 	}
 	gl.Uniform3f(uniform, v.R, v.G, v.B)
@@ -517,6 +526,7 @@ func (this *Engine) SetColor3(uniform gl.Uniform, v *math32.Color3) {
 
 func (this *Engine) SetColor4(uniform gl.Uniform, v *math32.Color4) {
 	if !uniform.Valid() {
+		log.Println("SetColor4 uniform.Valid Failed")
 		return
 	}
 	gl.Uniform4f(uniform, v.R, v.G, v.B, v.A)

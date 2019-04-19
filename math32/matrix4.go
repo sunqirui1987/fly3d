@@ -1,5 +1,9 @@
 package math32
 
+import (
+	"fmt"
+)
+
 // Matrix4 is 4x4 matrix organized internally as column matrix.
 type Matrix4 [16]float32
 
@@ -10,6 +14,15 @@ func NewMatrix4() *Matrix4 {
 	var mat Matrix4
 	mat.Identity()
 	return &mat
+}
+
+func (this *Matrix4) String() string {
+	return fmt.Sprintf("%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f",
+		this[0], this[1], this[2], this[3],
+		this[4], this[5], this[6], this[7],
+		this[8], this[9], this[10], this[11],
+		this[12], this[13], this[14], this[15],
+	)
 }
 
 func (this *Matrix4) IsIdentity() bool {

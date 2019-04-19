@@ -1,3 +1,7 @@
 {
-    "go.formatTool": "goimports"
+    "go.inferGopath": false,
+    "go.formatTool": "goimports",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "go.lintFlags": ["--disable-all", "--enable=errcheck"]
 }

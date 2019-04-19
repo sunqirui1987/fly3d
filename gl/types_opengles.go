@@ -73,7 +73,7 @@ func (v Renderbuffer) c() C.GLuint { return C.GLuint(v.Value) }
 func (v Texture) c() C.GLuint      { return C.GLuint(v.Value) }
 func (v Uniform) c() C.GLint       { return C.GLint(v.Value) }
 
-func (v Attrib) Valid() bool       { return v.Value != 0 }
+func (v Attrib) Valid() bool       { return int(v.Value) != -1 }
 func (v Program) Valid() bool      { return v.Value != 0 }
 func (v Shader) Valid() bool       { return v.Value != 0 }
 func (v Buffer) Valid() bool       { return v.Value != 0 }

@@ -1,6 +1,10 @@
 package meshs
 
 import (
+	"math"
+	"reflect"
+
+	log "github.com/sirupsen/logrus"
 	"github.com/suiqirui1987/fly3d/core"
 	"github.com/suiqirui1987/fly3d/engines"
 	"github.com/suiqirui1987/fly3d/gl"
@@ -8,9 +12,6 @@ import (
 	"github.com/suiqirui1987/fly3d/math32"
 	"github.com/suiqirui1987/fly3d/module/cullings"
 	"github.com/suiqirui1987/fly3d/tools"
-	"log"
-	"math"
-	"reflect"
 )
 
 type MeshCache struct {

@@ -1,9 +1,8 @@
 package windows
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/suiqirui1987/fly3d/tools/goevent"
-	"fmt"
-	"log"
 
 	"github.com/suiqirui1987/fly3d/gl"
 	"github.com/suiqirui1987/fly3d/glfw"
@@ -76,7 +75,7 @@ func NewApp(opt *AppOption) (*App, error) {
 
 	framebufferSizeCallback := func(w *glfw.Window, framebufferSize0, framebufferSize1 int) {
 		this.Width, this.Height = w.GetSize()
-		fmt.Printf("NewApp render %d ,%d size %d,%d \n", framebufferSize0, framebufferSize1, this.Width, this.Height)
+		log.Printf("NewApp render %d ,%d size %d,%d \n", framebufferSize0, framebufferSize1, this.Width, this.Height)
 
 		this.RenderWidth = framebufferSize0
 		this.RenderHeight = framebufferSize1

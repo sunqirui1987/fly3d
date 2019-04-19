@@ -62,9 +62,9 @@ func NewGLTextureBuffer() *GLTextureBuffer {
 		IsCube:          false,
 		UpdateFunc:      nil,
 	}
-	tex.Tex = Texture{Value: 0}
-	tex.FrameBuf = Framebuffer{Value: 0}
-	tex.DepthBuf = Renderbuffer{Value: 0}
+	tex.Tex = Texture{}
+	tex.FrameBuf = Framebuffer{}
+	tex.DepthBuf = Renderbuffer{}
 	return tex
 }
 

@@ -1,5 +1,9 @@
 package math32
 
+import (
+	"fmt"
+)
+
 type Color3 struct {
 	R float32
 	G float32
@@ -14,6 +18,10 @@ func NewColor3(r float32, g float32, b float32) *Color3 {
 		B: b,
 	}
 	return c
+}
+
+func (this *Color3) String() string {
+	return fmt.Sprintf("%f,%f,%f \n", this.R, this.G, this.B)
 }
 
 func (this *Color3) Multiply(other *Color3) *Color3 {

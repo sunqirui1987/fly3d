@@ -1,5 +1,7 @@
 package math32
 
+import "fmt"
+
 type Vector2 struct {
 	X float32
 	Y float32
@@ -11,6 +13,10 @@ func NewVector2(x, y float32) *Vector2 {
 func NewVector2Zero() *Vector2 {
 
 	return &Vector2{0, 0}
+}
+
+func (this *Vector2) String() string {
+	return fmt.Sprintf("%f,%f\n", this.X, this.Y)
 }
 
 func (this *Vector2) Add(otherVector *Vector2) *Vector2 {

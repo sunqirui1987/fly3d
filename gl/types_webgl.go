@@ -42,7 +42,7 @@ type Uniform struct {
 	*js.Object
 }
 
-func (v Attrib) Valid() bool       { return v.Value != 0 }
+func (v Attrib) Valid() bool       { return v.Value != -1 }
 func (v Program) Valid() bool      { return v.Object != nil }
 func (v Shader) Valid() bool       { return v.Object != nil }
 func (v Buffer) Valid() bool       { return v.Object != nil }
