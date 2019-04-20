@@ -216,7 +216,9 @@ func (this *Vector3) TransformNormalToRef(transformation *Matrix4, result *Vecto
 	y := (this.X * transformation[1]) + (this.Y * transformation[5]) + (this.Z * transformation[9])
 	z := (this.X * transformation[2]) + (this.Y * transformation[6]) + (this.Z * transformation[10])
 
-	result = NewVector3(x, y, z)
+	result.X = x
+	result.Y = y
+	result.Z = z
 }
 
 func (this *Vector3) TransformNormalFromFloats(x, y, z float32, transformation *Matrix4) *Vector3 {
