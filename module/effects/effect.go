@@ -114,10 +114,10 @@ func (this *Effect) GetUniformIndex(uniformName string) int {
 func (this *Effect) GetUniform(uniformName string) gl.Uniform {
 	index := this.GetUniformIndex(uniformName)
 	if index > -1 {
-		log.Printf("Effect GetUniform %s index %d ", uniformName, index)
+		log.Debugf("Effect GetUniform %s index %d ", uniformName, index)
 		return this._uniforms[index]
 	}
-	log.Printf("Effect GetUniform %s Failed", uniformName)
+	log.Debugf("Effect GetUniform %s Failed", uniformName)
 	return gl.Uniform{}
 }
 
@@ -150,7 +150,7 @@ func (this *Effect) _prepareEffect(vertexSourceCode string, fragmentSourceCode s
 func (this *Effect) SetTexture(channel string, texture *gl.GLTextureBuffer) {
 	index := tools.IndexOf(channel, this._samplers)
 	if index > -1 {
-		log.Printf("Effect SetTexture %s index %d ", channel, index)
+		log.Debugf("Effect SetTexture %s index %d ", channel, index)
 		this._engine.SetTexture(index, texture)
 	}
 
@@ -165,7 +165,7 @@ func (this *Effect) SetMatrix(uniformName string, val *math32.Matrix4) {
 	this._valueCache[uniformName] = val
 	this._engine.SetMatrix(this.GetUniform(uniformName), val)
 
-	log.Printf("Effect SetMatrix %s index %s", uniformName, val.String())
+	log.Debugf("Effect SetMatrix %s index %s", uniformName, val.String())
 }
 
 func (this *Effect) SetBool(uniformName string, val bool) {
@@ -177,7 +177,7 @@ func (this *Effect) SetBool(uniformName string, val bool) {
 	this._valueCache[uniformName] = val
 	this._engine.SetBool(this.GetUniform(uniformName), val)
 
-	log.Printf("Effect SetBool %s index  ", uniformName)
+	log.Debugf("Effect SetBool %s index  ", uniformName)
 }
 
 func (this *Effect) SetVector2(uniformName string, x, y float32) {
@@ -190,7 +190,7 @@ func (this *Effect) SetVector2(uniformName string, x, y float32) {
 	this._valueCache[uniformName] = val
 	this._engine.SetVector2(this.GetUniform(uniformName), val)
 
-	log.Printf("Effect SetVector2 %s index %s ", uniformName, val.String())
+	log.Debugf("Effect SetVector2 %s index %s ", uniformName, val.String())
 }
 func (this *Effect) SetVector2i(uniformName string, x, y int) {
 	val := math32.NewVector2(float32(x), float32(y))
@@ -202,7 +202,7 @@ func (this *Effect) SetVector2i(uniformName string, x, y int) {
 	this._valueCache[uniformName] = val
 	this._engine.SetVector2(this.GetUniform(uniformName), val)
 
-	log.Printf("Effect SetVector2i %s index %s ", uniformName, val.String())
+	log.Debugf("Effect SetVector2i %s index %s ", uniformName, val.String())
 }
 
 func (this *Effect) SetVector3(uniformName string, val *math32.Vector3) {
@@ -215,7 +215,7 @@ func (this *Effect) SetVector3(uniformName string, val *math32.Vector3) {
 	this._valueCache[uniformName] = val
 	this._engine.SetVector3(this.GetUniform(uniformName), val)
 
-	log.Printf("Effect SetVector3 %s index %s ", uniformName, val.String())
+	log.Debugf("Effect SetVector3 %s index %s ", uniformName, val.String())
 }
 
 func (this *Effect) SetFloat2(uniformName string, x, y float32) {
@@ -228,7 +228,7 @@ func (this *Effect) SetFloat2(uniformName string, x, y float32) {
 	this._valueCache[uniformName] = val
 	this._engine.SetFloat2(this.GetUniform(uniformName), x, y)
 
-	log.Printf("Effect SetFloat2 %s index %s ", uniformName, val.String())
+	log.Debugf("Effect SetFloat2 %s index %s ", uniformName, val.String())
 }
 
 func (this *Effect) SetFloat3(uniformName string, x, y, z float32) {
@@ -241,7 +241,7 @@ func (this *Effect) SetFloat3(uniformName string, x, y, z float32) {
 	this._valueCache[uniformName] = val
 	this._engine.SetFloat3(this.GetUniform(uniformName), x, y, z)
 
-	log.Printf("Effect SetFloat3 %s index %s ", uniformName, val.String())
+	log.Debugf("Effect SetFloat3 %s index %s ", uniformName, val.String())
 }
 
 func (this *Effect) SetFloat4(uniformName string, x, y, z, w float32) {
@@ -254,7 +254,7 @@ func (this *Effect) SetFloat4(uniformName string, x, y, z, w float32) {
 	this._valueCache[uniformName] = val
 	this._engine.SetFloat4(this.GetUniform(uniformName), x, y, z, w)
 
-	log.Printf("Effect SetFloat4 %s index %s ", uniformName, val.String())
+	log.Debugf("Effect SetFloat4 %s index %s ", uniformName, val.String())
 }
 
 func (this *Effect) SetColor3(uniformName string, val *math32.Color3) {
@@ -267,7 +267,7 @@ func (this *Effect) SetColor3(uniformName string, val *math32.Color3) {
 	this._valueCache[uniformName] = val
 	this._engine.SetColor3(this.GetUniform(uniformName), val)
 
-	log.Printf("Effect SetColor3 %s index %s ", uniformName, val.String())
+	log.Debugf("Effect SetColor3 %s index %s ", uniformName, val.String())
 }
 
 func (this *Effect) SetColor42(uniformName string, val *math32.Color4) {
@@ -280,7 +280,7 @@ func (this *Effect) SetColor42(uniformName string, val *math32.Color4) {
 	this._valueCache[uniformName] = val
 	this._engine.SetColor4(this.GetUniform(uniformName), val)
 
-	log.Printf("Effect SetColor42 %s index %s ", uniformName, val.String())
+	log.Debugf("Effect SetColor42 %s index %s ", uniformName, val.String())
 }
 func (this *Effect) SetColor4(uniformName string, c3 *math32.Color3, a float32) {
 	val := math32.NewColor4(c3.R, c3.G, c3.B, a)
@@ -293,5 +293,5 @@ func (this *Effect) SetColor4(uniformName string, c3 *math32.Color3, a float32) 
 	this._valueCache[uniformName] = val
 	this._engine.SetColor4(this.GetUniform(uniformName), val)
 
-	log.Printf("Effect SetColor4 %s index %s ", uniformName, val.String())
+	log.Debugf("Effect SetColor4 %s index %s ", uniformName, val.String())
 }

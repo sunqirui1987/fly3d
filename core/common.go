@@ -6,6 +6,7 @@ import (
 	"image/png"
 
 	"github.com/suiqirui1987/fly3d/math32"
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 )
 
 const (
@@ -30,15 +31,17 @@ type Fly3D struct {
 	IsIE              bool //IE
 	ResRepository     string
 	ShadersRepository string
-	IsDebug           bool
 }
 
 //全局
 var GlobalFly3D = &Fly3D{
 	ClipPlane:         nil,
 	IsIE:              false,
-	IsDebug:           true,
 	ShadersRepository: "github.com/suiqirui1987/fly3d/shaders/",
+}
+
+func (this *Fly3D) SetIsDebug(val bool) {
+	log.IsDebug = val
 }
 
 func init() {

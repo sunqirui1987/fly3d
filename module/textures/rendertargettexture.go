@@ -48,6 +48,10 @@ func (this *RenderTargetTexture) IsRenderTarget() bool {
 	return true
 }
 
+func (this *RenderTargetTexture) GetRenderList() []IMesh {
+	return this._renderList
+}
+
 func (this *RenderTargetTexture) Resize(size int, generateMipMaps bool) {
 	this.ReleaseGLTexture()
 	this._texture = this._scene.GetEngine().CreateRenderTargetTexture(size, generateMipMaps)

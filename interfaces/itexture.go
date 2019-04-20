@@ -20,3 +20,9 @@ type ITexture interface {
 	Render()
 	Dispose()
 }
+
+type IRenderTargetTexture interface {
+	ITexture
+
+	GetRenderList() []IMesh
+}

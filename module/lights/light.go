@@ -5,6 +5,8 @@ import (
 	. "github.com/suiqirui1987/fly3d/interfaces"
 	"github.com/suiqirui1987/fly3d/math32"
 	"github.com/suiqirui1987/fly3d/tools"
+
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 )
 
 type Light struct {
@@ -68,6 +70,15 @@ func (this *Light) GetDirection() *math32.Vector3 {
 
 func (this *Light) GetShadowGenerator() IShadowGenerator {
 	return this.ShadowGenerator
+}
+func (this *Light) SetShadowGenerator(val IShadowGenerator) {
+	instance, ok := val.(*ShadowGenerator)
+	if !ok {
+		log.Print(" SetShadowGenerator: this interface not  ShadowGenerator instance")
+		return
+	}
+
+	this.ShadowGenerator = instance
 }
 
 func (this *Light) IsSupportShadow() bool {
