@@ -3,7 +3,8 @@ package tools
 
 import (
 	"image"
-	"log"
+
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 )
 
 func LoadImage(url string, onload func(*image.RGBA), onfail func(error)) {

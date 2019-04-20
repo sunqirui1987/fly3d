@@ -536,22 +536,18 @@ func (this *Engine) SetColor4(uniform gl.Uniform, v *math32.Color4) {
 
 func (this *Engine) SetState(culling bool) {
 	// Culling
-	if this._currentState.Culling != culling {
-		if culling {
-			var culltype gl.Enum
-			//Fix Gl.Front
-			if this.CullBackFaces == true {
-				culltype = gl.BACK
-			} else {
-				culltype = gl.FRONT
-			}
-			gl.CullFace(culltype)
-			gl.Enable(gl.CULL_FACE)
+	if culling {
+		var culltype gl.Enum
+		//Fix Gl.Front
+		if this.CullBackFaces == true {
+			culltype = gl.BACK
 		} else {
-			gl.Disable(gl.CULL_FACE)
+			culltype = gl.FRONT
 		}
-
-		this._currentState.Culling = culling
+		gl.CullFace(culltype)
+		gl.Enable(gl.CULL_FACE)
+	} else {
+		gl.Disable(gl.CULL_FACE)
 	}
 }
 func (this *Engine) SetDepthBuffer(enable bool) {
