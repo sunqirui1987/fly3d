@@ -734,6 +734,7 @@ func (this *Engine) UpdateVideoTexture(texture *gl.GLTextureBuffer, img *image.R
 }
 
 func (this *Engine) CreateRenderTargetTexture(size int, generateMipMaps bool) *gl.GLTextureBuffer {
+	log.Debugf("CreateRenderTargetTexture size %d ", size)
 	texture := gl.NewGLTextureBuffer()
 	texture.Tex = gl.CreateTexture()
 

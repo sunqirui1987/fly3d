@@ -24,5 +24,5 @@ type ITexture interface {
 type IRenderTargetTexture interface {
 	ITexture
 
-	GetRenderList() []IMesh
+	AddRenderList(IMesh)
 }

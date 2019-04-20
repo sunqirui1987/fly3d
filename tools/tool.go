@@ -3,7 +3,6 @@ package tools
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/suiqirui1987/fly3d/math32"
 	"fmt"
 	"image"
 	"image/draw"
@@ -14,6 +13,8 @@ import (
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/suiqirui1987/fly3d/math32"
 )
 
 //implement interval multi-timer
@@ -92,7 +93,7 @@ func IndexOf(params ...interface{}) int {
 		panic("Type Error! Second argument must be an array or a slice.")
 	}
 
-	for i := 0; i < arr.Len()-1; i++ {
+	for i := 0; i < arr.Len(); i++ {
 		if arr.Index(i).Interface() == v.Interface() {
 			return i
 		}

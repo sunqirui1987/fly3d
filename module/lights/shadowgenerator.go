@@ -107,27 +107,6 @@ func NewShadowGenerator(name string, mapSize int, light ILight, scene *engines.S
 	return this
 }
 
-func (this *ShadowGenerator) GetTransformMatrix() *math32.Matrix4 {
-
-	if this._cachedPosition != nil ||
-		this._cachedDirection != nil ||
-		!this._light.GetPosition().Equals(this._cachedPosition) ||
-		!this._light.GetDirection().Equals(this._cachedDirection) {
-
-		this._cachedPosition = this._light.GetPosition().Clone()
-		this._cachedDirection = this._light.GetDirection().Clone()
-
-		activeCamera := this._scene.ActiveCamera
-
-		this._viewMatrix = math32.NewMatrix4().LookAtLH(this._light.GetPosition(), this._light.GetPosition().Add(this._light.GetDirection()), math32.NewVector3Up())
-		this._projectionMatrix = math32.NewMatrix4().PerspectiveFovLH(math.Pi/2.0, 1.0, activeCamera.GetMinZ(), activeCamera.GetMaxZ())
-
-		this._viewMatrix.MultiplyToRef(this._projectionMatrix, this._transformMatrix)
-	}
-
-	return this._transformMatrix
-}
-
 func (this *ShadowGenerator) Dispose() {
 	this._shadowMap.Dispose()
 }
@@ -144,6 +123,27 @@ func (this *ShadowGenerator) IsReady() bool {
 
 func (this *ShadowGenerator) IsUseVarianceShadowMap() bool {
 	return this.UseVarianceShadowMap
+}
+
+func (this *ShadowGenerator) GetTransformMatrix() *math32.Matrix4 {
+
+	if this._cachedPosition == nil ||
+		this._cachedDirection == nil ||
+		!this._light.GetPosition().Equals(this._cachedPosition) ||
+		!this._light.GetDirection().Equals(this._cachedDirection) {
+
+		this._cachedPosition = this._light.GetPosition().Clone()
+		this._cachedDirection = this._light.GetDirection().Clone()
+
+		activeCamera := this._scene.ActiveCamera
+
+		this._viewMatrix = math32.NewMatrix4().LookAtLH(this._light.GetPosition(), this._light.GetPosition().Add(this._light.GetDirection()), math32.NewVector3Up())
+		this._projectionMatrix = math32.NewMatrix4().PerspectiveFovLH(math.Pi/2.0, 1.0, activeCamera.GetMinZ(), activeCamera.GetMaxZ())
+
+		this._viewMatrix.MultiplyToRef(this._projectionMatrix, this._transformMatrix)
+	}
+
+	return this._transformMatrix
 }
 
 func (this *ShadowGenerator) GetShadowMap() IRenderTargetTexture {

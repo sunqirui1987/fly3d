@@ -5,6 +5,7 @@ import "github.com/suiqirui1987/fly3d/math32"
 type IShadowGenerator interface {
 	IsReady() bool
 	IsUseVarianceShadowMap() bool
+	GetTransformMatrix() *math32.Matrix4
 	GetShadowMap() IRenderTargetTexture
 	Dispose()
 }

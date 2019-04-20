@@ -1,14 +1,15 @@
 package materials
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/suiqirui1987/fly3d/core"
 	"github.com/suiqirui1987/fly3d/engines"
 	. "github.com/suiqirui1987/fly3d/interfaces"
 	"github.com/suiqirui1987/fly3d/math32"
 	"github.com/suiqirui1987/fly3d/module/effects"
 	"github.com/suiqirui1987/fly3d/module/lights"
-	"strconv"
-	"strings"
 )
 
 type StandardMaterial struct {
@@ -377,6 +378,14 @@ func (this *StandardMaterial) Bind(world *math32.Matrix4, mesh IMesh) {
 
 		this._effect.SetColor3("vLightDiffuse"+lightIndex_str, this._scaledDiffuse)
 		this._effect.SetColor3("vLightSpecular"+lightIndex_str, this._scaledSpecular)
+
+		// Shadows
+		shadowGenerator := light.GetShadowGenerator()
+		if mesh.IsReceiveShadows() && shadowGenerator != nil && shadowGenerator.IsReady() {
+			this._lightMatrix = world.Multiply(shadowGenerator.GetTransformMatrix())
+			this._effect.SetMatrix("lightMatrix"+lightIndex_str, this._lightMatrix)
+			this._effect.SetTexture("shadowSampler"+lightIndex_str, shadowGenerator.GetShadowMap().GetGLTexture())
+		}
 
 		lightIndex++
 

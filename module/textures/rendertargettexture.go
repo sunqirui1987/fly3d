@@ -3,6 +3,7 @@ package textures
 import (
 	"github.com/suiqirui1987/fly3d/engines"
 	. "github.com/suiqirui1987/fly3d/interfaces"
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 )
 
 type RenderTargetTexture struct {
@@ -48,8 +49,8 @@ func (this *RenderTargetTexture) IsRenderTarget() bool {
 	return true
 }
 
-func (this *RenderTargetTexture) GetRenderList() []IMesh {
-	return this._renderList
+func (this *RenderTargetTexture) AddRenderList(val IMesh) {
+	this._renderList = append(this._renderList, val)
 }
 
 func (this *RenderTargetTexture) Resize(size int, generateMipMaps bool) {
@@ -74,6 +75,7 @@ func (this *RenderTargetTexture) Render() {
 	this._waitingRenderList = make([]string, 0)
 
 	if len(this._renderList) == 0 {
+		log.Debugf("RenderTargetTexture RenderList len %d", len(this._renderList))
 		return
 	}
 
@@ -118,7 +120,7 @@ func (this *RenderTargetTexture) Render() {
 		scene.LocalRender(this._opaqueSubMeshes, this._alphaTestSubMeshes, this._transparentSubMeshes, this._renderList)
 	}
 	// Unbind
-	engine.UnBindFramebuffer(this._texture)
+	//engine.UnBindFramebuffer(this._texture)
 
 	if this.OnAfterRender != nil {
 		this.OnAfterRender()
