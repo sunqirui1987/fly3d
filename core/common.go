@@ -5,8 +5,6 @@ import (
 	"image/jpeg"
 	"image/png"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/suiqirui1987/fly3d/math32"
 )
 
@@ -43,16 +41,7 @@ var GlobalFly3D = &Fly3D{
 	ShadersRepository: "github.com/suiqirui1987/fly3d/shaders/",
 }
 
-var (
-	logger = log.WithField("component", "fly3d")
-)
-
 func init() {
-
-	log.SetFormatter(&log.TextFormatter{
-		DisableColors: true,
-		FullTimestamp: true,
-	})
 
 	image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
 	image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)

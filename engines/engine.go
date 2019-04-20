@@ -5,7 +5,7 @@ import (
 	"image"
 	"reflect"
 
-	log "github.com/sirupsen/logrus"
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 
 	"github.com/suiqirui1987/fly3d/core"
 	"github.com/suiqirui1987/fly3d/gl"
@@ -404,7 +404,7 @@ func (this *Engine) CreateShaderProgram(vertexCode, fragmentCode, defines string
 	shaderProgram, err := glutil.CreateProgram(vertexCode_str, fragmentCode_str)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		return gl.Program{}
 	}
 
@@ -763,7 +763,7 @@ func (this *Engine) CreateRenderTargetTexture(size int, generateMipMaps bool) *g
 	gl.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer)
 
 	if status := gl.CheckFramebufferStatus(gl.FRAMEBUFFER); status != gl.FRAMEBUFFER_COMPLETE {
-		log.Fatalf("framebuffer create failed: %v", status)
+		log.Printf("framebuffer create failed: %v", status)
 		return texture
 	}
 

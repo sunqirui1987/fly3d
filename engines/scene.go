@@ -3,7 +3,7 @@ package engines
 import (
 	"math"
 
-	log "github.com/sirupsen/logrus"
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 	"github.com/suiqirui1987/fly3d/core"
 	. "github.com/suiqirui1987/fly3d/interfaces"
 	"github.com/suiqirui1987/fly3d/math32"

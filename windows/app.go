@@ -1,7 +1,7 @@
 package windows
 
 import (
-	log "github.com/sirupsen/logrus"
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 	"github.com/suiqirui1987/fly3d/tools/goevent"
 
 	"github.com/suiqirui1987/fly3d/gl"

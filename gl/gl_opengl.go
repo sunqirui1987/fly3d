@@ -23,7 +23,7 @@ func (cw *contextWatcher) OnMakeCurrent(context interface{}) {
 		// Initialise gl bindings using the current context.
 		err := gl.Init()
 		if err != nil {
-			log.Fatalf("gl.Init: %v \n", err)
+			log.Printf("gl.Init: %v \n", err)
 		}
 		cw.initGL = true
 	}

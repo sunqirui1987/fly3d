@@ -4,7 +4,7 @@ import (
 	"math"
 	"reflect"
 
-	log "github.com/sirupsen/logrus"
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 	"github.com/suiqirui1987/fly3d/core"
 	"github.com/suiqirui1987/fly3d/engines"
 	"github.com/suiqirui1987/fly3d/gl"
@@ -364,7 +364,7 @@ func (this *Mesh) Render(submesh ISubMesh) {
 
 	subMesh, ok := submesh.(*SubMesh)
 	if !ok {
-		log.Fatalf("Mesh Rend Failed : submesh is not SubMesh interface")
+		log.Printf("Mesh Rend Failed : submesh is not SubMesh interface")
 		return
 	}
 
