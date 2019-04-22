@@ -12,6 +12,8 @@ type PointLight struct {
 func NewPointLight(name string, position *math32.Vector3, scene *engines.Scene) *PointLight {
 	this := &PointLight{}
 
+	this.Init()
+
 	this.Name = name
 	this.Id = name
 	this._scene = scene

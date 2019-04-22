@@ -5,10 +5,10 @@ import (
 )
 
 var (
-	fpsRange               float32   = 60.0
-	previousFramesDuration []float32 = make([]float32, 0)
-	fps                    float32   = 60.0
-	deltaTime              float32   = 0.0
+	fpsRange               float32 = 60.0
+	previousFramesDuration []int64 = make([]int64, 0)
+	fps                    float32 = 60.0
+	deltaTime              float32 = 0.0
 )
 
 func GetFps() float32 {
@@ -21,10 +21,11 @@ func GetDeltaTime() float32 {
 
 func MeasureFps() {
 
-	previousFramesDuration = append(previousFramesDuration, float32(time.Now().UnixNano())/1e6)
+	millis := time.Now().UnixNano() / 1000000
+	previousFramesDuration = append(previousFramesDuration, millis)
 	length := len(previousFramesDuration)
 	if length >= 2 {
-		deltaTime = previousFramesDuration[length-1] - previousFramesDuration[length-2]
+		deltaTime = float32(previousFramesDuration[length-1] - previousFramesDuration[length-2])
 	}
 	if float32(length) >= fpsRange {
 		if float32(length) > fpsRange {
@@ -32,13 +33,13 @@ func MeasureFps() {
 			length = len(previousFramesDuration)
 		}
 
-		var sum float32
+		var sum int64
 		sum = 0
 		for id := 0; id < length-1; id++ {
 			sum += previousFramesDuration[id+1] - previousFramesDuration[id]
 		}
 
-		fps = 1000.0 / (sum / float32(length-1))
+		fps = 1000.0 / float32(sum/int64(length-1))
 	}
 
 }

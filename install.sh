@@ -4,9 +4,6 @@ currPWD=$(cd `dirname $0`; pwd)
 
 echo "currPWD [$currPWD] OS [$OS]"
 
-export GO111MODULE=off
-go get -u golang.org/x/mobile/cmd/gobind
-go get -u golang.org/x/mobile/cmd/gomobile
 
 echo "config go env"
 export GOPATH=$GOPATH:$currPWD

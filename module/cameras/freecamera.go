@@ -1,13 +1,18 @@
 package cameras
 
 import (
+	"math"
+
+	. "github.com/suiqirui1987/fly3d/interfaces"
+
 	"github.com/suiqirui1987/fly3d/core"
 	"github.com/suiqirui1987/fly3d/engines"
 	"github.com/suiqirui1987/fly3d/math32"
 	"github.com/suiqirui1987/fly3d/module/collisions"
 	"github.com/suiqirui1987/fly3d/tools"
 	"github.com/suiqirui1987/fly3d/windows"
-	"math"
+
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 )
 
 type FreeCamera struct {
@@ -19,8 +24,8 @@ type FreeCamera struct {
 	Ellipsoid          *math32.Vector3
 	AngularSensibility float32
 	MoveSensibility    float32
-
-	_keys []int
+	OnCollide          func(IMesh)
+	_keys              []string
 
 	// Collisions
 	_collider           *collisions.Collider
@@ -36,6 +41,11 @@ type FreeCamera struct {
 	Speed           float32
 	CheckCollisions bool
 	ApplyGravity    bool
+
+	KeysUp    []string
+	KeysDown  []string
+	KeysLeft  []string
+	KeysRight []string
 }
 
 func NewFreeCamera(name string, position *math32.Vector3, scene *engines.Scene) *FreeCamera {
@@ -47,6 +57,12 @@ func NewFreeCamera(name string, position *math32.Vector3, scene *engines.Scene) 
 	if this._scene.ActiveCamera == nil {
 		this._scene.ActiveCamera = this
 	}
+
+	this.KeysUp = []string{"UP"}
+	this.KeysDown = []string{"DOWN"}
+	this.KeysLeft = []string{"LEFT"}
+	this.KeysRight = []string{"RIGHT"}
+
 	return this
 
 }
@@ -60,7 +76,7 @@ func (this *FreeCamera) Init(name string, position *math32.Vector3, scene *engin
 	this.Rotation = math32.NewVector3(0, 0, 0)
 	this.Ellipsoid = math32.NewVector3(0.5, 1, 0.5)
 
-	this._keys = make([]int, 0)
+	this._keys = make([]string, 0)
 
 	// Collisions
 	this._collider = collisions.NewCollider()
@@ -117,7 +133,7 @@ func (this *FreeCamera) AttachControl(win windows.IWindow) {
 
 	_onPointerOut := func(evt *windows.MouseEvent) error {
 		previousPosition = nil
-		that._keys = make([]int, 0)
+		that._keys = make([]string, 0)
 		evt.StopPropagation()
 		return nil
 	}
@@ -141,20 +157,15 @@ func (this *FreeCamera) AttachControl(win windows.IWindow) {
 	}
 
 	_onKeyDown := func(evt *windows.KeyboardEvent) error {
-		if evt.KeyCode == KEYS_UP ||
-			evt.KeyCode == KEYS_DOWN ||
-			evt.KeyCode == KEYS_LEFT ||
-			evt.KeyCode == KEYS_RIGHT {
+		log.Printf("FreeCamera onKeyDown %d, %s", evt.KeyCode, evt.CharCode)
+		if tools.IndexOf(evt.CharCode, this.KeysUp) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysDown) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysLeft) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysRight) != -1 {
 
-			index := -1
-			for i, code := range that._keys {
-				if code == evt.KeyCode {
-					index = i
-				}
-
-			}
+			index := tools.IndexOf(evt.CharCode, that._keys)
 			if index == -1 {
-				that._keys = append(that._keys, evt.KeyCode)
+				that._keys = append(that._keys, evt.CharCode)
 			}
 			evt.StopPropagation()
 		}
@@ -163,19 +174,13 @@ func (this *FreeCamera) AttachControl(win windows.IWindow) {
 	}
 
 	_onKeyUp := func(evt *windows.KeyboardEvent) error {
-		if evt.KeyCode == KEYS_UP ||
-			evt.KeyCode == KEYS_DOWN ||
-			evt.KeyCode == KEYS_LEFT ||
-			evt.KeyCode == KEYS_RIGHT {
+		log.Printf("FreeCamera onKeyUp %d, %s", evt.KeyCode, evt.CharCode)
+		if tools.IndexOf(evt.CharCode, this.KeysUp) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysDown) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysLeft) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysRight) != -1 {
 
-			index := -1
-			for i, code := range that._keys {
-				if code == evt.KeyCode {
-					index = i
-				}
-
-			}
-
+			index := tools.IndexOf(evt.CharCode, that._keys)
 			if index >= 0 {
 				that._keys = append(that._keys[:index], that._keys[index+1:]...)
 			}
@@ -188,7 +193,7 @@ func (this *FreeCamera) AttachControl(win windows.IWindow) {
 
 	_onLostFocus := func(evt *windows.FocusEvent) error {
 		if evt.Focused == false {
-			that._keys = make([]int, 0)
+			that._keys = make([]string, 0)
 		}
 		return nil
 	}
@@ -219,38 +224,46 @@ func (this *FreeCamera) _collideWithWorld(velocity *math32.Vector3) {
 	oldPosition := this.Position.Sub(math32.NewVector3(0, this.Ellipsoid.Y, 0))
 	this._collider.Radius = this.Ellipsoid
 
+	if this.ApplyGravity {
+		velocity = velocity.Add(this._scene.Gravity)
+	}
+
 	newPosition := collisions.GetNewPosition(this._scene, oldPosition, velocity, this._collider, 3)
 	diffPosition := newPosition.Sub(oldPosition)
 
 	if diffPosition.Length() > core.CollisionsEpsilon {
 		this.Position = this.Position.Add(diffPosition)
+
+		collidedMesh := this._collider.GetMesh()
+		if this.OnCollide != nil && !tools.IsNil(collidedMesh) {
+			this.OnCollide(collidedMesh)
+		}
 	}
 }
 
 func (this *FreeCamera) _checkInputs() {
 	// Keyboard
 	for index := 0; index < len(this._keys); index++ {
-		keyCode := this._keys[index]
+		charCode := this._keys[index]
+
 		var direction *math32.Vector3
 		speed := this._computeLocalCameraSpeed()
 
-		switch keyCode {
-		case KEYS_LEFT:
+		if tools.IndexOf(charCode, this.KeysLeft) != -1 {
 			direction = math32.NewVector3(-speed, 0, 0)
-			break
-		case KEYS_UP:
+		} else if tools.IndexOf(charCode, this.KeysUp) != -1 {
 			direction = math32.NewVector3(0, 0, speed)
-			break
-		case KEYS_RIGHT:
+		} else if tools.IndexOf(charCode, this.KeysRight) != -1 {
 			direction = math32.NewVector3(speed, 0, 0)
-			break
-		case KEYS_DOWN:
+		} else if tools.IndexOf(charCode, this.KeysDown) != -1 {
 			direction = math32.NewVector3(0, 0, -speed)
-			break
 		}
-		m := math32.NewMatrix4()
-		cameraTransform := m.RotationYawPitchRoll(this.Rotation.Y, this.Rotation.X, 0)
-		this.CameraDirection = this.CameraDirection.Add(direction.TransformCoordinates(cameraTransform))
+
+		//log.Printf("_checkInputs %s direction %f ", charCode, direction)
+
+		cameraTransformMatrix := math32.NewMatrix4().RotationYawPitchRoll(this.Rotation.Y, this.Rotation.X, 0)
+		transformedDirection := direction.TransformCoordinates(cameraTransformMatrix)
+		this.CameraDirection = this.CameraDirection.Add(transformedDirection)
 	}
 }
 func (this *FreeCamera) Update() {
@@ -263,12 +276,6 @@ func (this *FreeCamera) Update() {
 	if needToMove {
 		if this.CheckCollisions && this._scene.CollisionsEnabled {
 			this._collideWithWorld(this.CameraDirection)
-
-			if this.ApplyGravity {
-				oldPosition := this.Position
-				this._collideWithWorld(this._scene.Gravity)
-				this._needMoveForGravity = (oldPosition.Sub(this.Position).Length() != 0)
-			}
 		} else {
 			this.Position = this.Position.Add(this.CameraDirection)
 		}

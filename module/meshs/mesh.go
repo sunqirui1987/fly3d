@@ -4,7 +4,6 @@ import (
 	"math"
 	"reflect"
 
-	log "github.com/suiqirui1987/fly3d/tools/logrus"
 	"github.com/suiqirui1987/fly3d/core"
 	"github.com/suiqirui1987/fly3d/engines"
 	"github.com/suiqirui1987/fly3d/gl"
@@ -12,6 +11,7 @@ import (
 	"github.com/suiqirui1987/fly3d/math32"
 	"github.com/suiqirui1987/fly3d/module/cullings"
 	"github.com/suiqirui1987/fly3d/tools"
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 )
 
 type MeshCache struct {
@@ -253,12 +253,12 @@ func (this *Mesh) _computeWorldMatrix() *math32.Matrix4 {
 
 		}
 
-		this._boundingInfo.Update(localWorld, this._scaleFactor)
+		this._boundingInfo.Update(this._worldMatrix, this._scaleFactor)
 
 		for subIndex := 0; subIndex < len(this.SubMeshes); subIndex++ {
 			subMesh := this.SubMeshes[subIndex]
 
-			subMesh.UpdateBoundingInfo(localWorld, this._scaleFactor)
+			subMesh.UpdateBoundingInfo(this._worldMatrix, this._scaleFactor)
 		}
 	}
 
@@ -485,7 +485,7 @@ func (this *Mesh) _resetPointsArrayCache() {
 	this._cache_positions = nil
 }
 func (this *Mesh) _generatePointsArray() {
-	if this._cache_positions == nil {
+	if this._cache_positions != nil {
 		return
 	}
 
@@ -515,6 +515,10 @@ func (this *Mesh) _collideForSubMesh(subMesh *SubMesh, transformMatrix *math32.M
 	}
 	// Collide
 	collider.Collide(subMesh, subMesh._lastColliderWorldVertices, this._indices, subMesh._indexStart, subMesh._indexStart+subMesh._indexCount, subMesh._verticesStart)
+
+	if collider.HasCollisionFound() {
+		collider.SetMesh(this)
+	}
 }
 
 func (this *Mesh) _processCollisionsForSubModels(collider ICollider, transformMatrix *math32.Matrix4) {
@@ -531,6 +535,7 @@ func (this *Mesh) _processCollisionsForSubModels(collider ICollider, transformMa
 }
 
 func (this *Mesh) _checkCollision(collider ICollider) {
+
 	// Bounding box test
 	if !this._boundingInfo.CheckCollision(collider) {
 		return
@@ -541,6 +546,8 @@ func (this *Mesh) _checkCollision(collider ICollider) {
 	this._collisionsTransformMatrix = this._worldMatrix.Multiply(this._collisionsScalingMatrix)
 
 	this._processCollisionsForSubModels(collider, this._collisionsTransformMatrix)
+
+	return
 }
 
 func (this *Mesh) IntersectsMesh(mesh *Mesh, precise bool) bool {

@@ -36,7 +36,7 @@ func NewLight(name string, scene *engines.Scene) *Light {
 }
 
 func (this *Light) Init() {
-	this.Intensity = 0.1
+	this.Intensity = 1.0
 	this.Isenable = true
 }
 

@@ -1,8 +1,9 @@
 package cullings
 
 import (
-	"github.com/suiqirui1987/fly3d/math32"
 	"math"
+
+	"github.com/suiqirui1987/fly3d/math32"
 )
 
 //box 检测
@@ -126,8 +127,8 @@ func (this *BoundingBox) Update(world *math32.Matrix4) {
 	}
 
 	//OBB
-	this.Center = this.MaximumWorld.Add(this.MinimumWorld).Scale(0.5)
-	this.Extends = this.MaximumWorld.Sub(this.MinimumWorld).Scale(0.5)
+	this.Center = this.MaximumWorld.Add(this.MinimumWorld)
+	this.Center = this.Center.Scale(0.5)
 
 	math32.NewVector3Zero().FromArrayToRef(world.ToArray32(), 0, this.Directions[0])
 	math32.NewVector3Zero().FromArrayToRef(world.ToArray32(), 4, this.Directions[1])

@@ -29,6 +29,9 @@ func (this *BaseTexture) GetGLTexture() *gl.GLTextureBuffer {
 	return this._texture
 }
 
+func (this *BaseTexture) EnableHasAlpha(val bool) {
+	this._hasAlpha = val
+}
 func (this *BaseTexture) HasAlpha() bool {
 	return this._hasAlpha
 }

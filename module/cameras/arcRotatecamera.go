@@ -1,11 +1,13 @@
 package cameras
 
 import (
+	"math"
+
 	"github.com/suiqirui1987/fly3d/core"
 	"github.com/suiqirui1987/fly3d/engines"
 	"github.com/suiqirui1987/fly3d/math32"
+	"github.com/suiqirui1987/fly3d/tools"
 	"github.com/suiqirui1987/fly3d/windows"
-	"math"
 )
 
 type IArcRotateCameraTarget interface {
@@ -23,7 +25,11 @@ type ArcRotateCamera struct {
 	InertialAlphaOffset float32
 	InertialBetaOffset  float32
 
-	_keys []int
+	_keys     []string
+	KeysUp    []string
+	KeysDown  []string
+	KeysLeft  []string
+	KeysRight []string
 }
 
 func NewArcRotateCamera(name string, alpha, beta, radius float32, target IArcRotateCameraTarget, scene *engines.Scene) *ArcRotateCamera {
@@ -36,6 +42,11 @@ func NewArcRotateCamera(name string, alpha, beta, radius float32, target IArcRot
 	if this._scene.ActiveCamera == nil {
 		this._scene.ActiveCamera = this
 	}
+
+	this.KeysUp = []string{"UP"}
+	this.KeysDown = []string{"DOWN"}
+	this.KeysLeft = []string{"LEFT"}
+	this.KeysRight = []string{"RIGHT"}
 
 	this.GetViewMatrix()
 	return this
@@ -50,7 +61,7 @@ func (this *ArcRotateCamera) Init(name string, alpha, beta, radius float32, targ
 	this.Radius = radius
 	this.Target = target
 
-	this._keys = make([]int, 0)
+	this._keys = make([]string, 0)
 
 	this._scene = scene
 
@@ -110,20 +121,14 @@ func (this *ArcRotateCamera) AttachControl(win windows.IWindow) {
 	}
 
 	_onKeyDown := func(evt *windows.KeyboardEvent) error {
-		if evt.KeyCode == KEYS_UP ||
-			evt.KeyCode == KEYS_DOWN ||
-			evt.KeyCode == KEYS_LEFT ||
-			evt.KeyCode == KEYS_RIGHT {
+		if tools.IndexOf(evt.CharCode, this.KeysUp) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysDown) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysLeft) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysRight) != -1 {
 
-			index := -1
-			for i, code := range that._keys {
-				if code == evt.KeyCode {
-					index = i
-				}
-
-			}
+			index := tools.IndexOf(evt.CharCode, that._keys)
 			if index == -1 {
-				that._keys = append(that._keys, evt.KeyCode)
+				that._keys = append(that._keys, evt.CharCode)
 			}
 			evt.StopPropagation()
 		}
@@ -132,19 +137,12 @@ func (this *ArcRotateCamera) AttachControl(win windows.IWindow) {
 	}
 
 	_onKeyUp := func(evt *windows.KeyboardEvent) error {
-		if evt.KeyCode == KEYS_UP ||
-			evt.KeyCode == KEYS_DOWN ||
-			evt.KeyCode == KEYS_LEFT ||
-			evt.KeyCode == KEYS_RIGHT {
+		if tools.IndexOf(evt.CharCode, this.KeysUp) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysDown) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysLeft) != -1 ||
+			tools.IndexOf(evt.CharCode, this.KeysRight) != -1 {
 
-			index := -1
-			for i, code := range that._keys {
-				if code == evt.KeyCode {
-					index = i
-				}
-
-			}
-
+			index := tools.IndexOf(evt.CharCode, that._keys)
 			if index >= 0 {
 				that._keys = append(that._keys[:index], that._keys[index+1:]...)
 			}
@@ -157,7 +155,7 @@ func (this *ArcRotateCamera) AttachControl(win windows.IWindow) {
 
 	_onLostFocus := func(evt *windows.FocusEvent) error {
 		if evt.Focused == false {
-			that._keys = make([]int, 0)
+			that._keys = make([]string, 0)
 		}
 		return nil
 	}
@@ -191,15 +189,15 @@ func (this *ArcRotateCamera) DetachControl(win windows.IWindow) {
 func (this *ArcRotateCamera) Update() {
 	// Keyboard
 	for index := 0; index < len(this._keys); index++ {
-		keyCode := this._keys[index]
+		keyChar := this._keys[index]
 
-		if keyCode == KEYS_LEFT {
+		if tools.IndexOf(keyChar, this.KeysLeft) != -1 {
 			this.InertialAlphaOffset -= 0.01
-		} else if keyCode == KEYS_UP {
+		} else if tools.IndexOf(keyChar, this.KeysUp) != -1 {
 			this.InertialBetaOffset -= 0.01
-		} else if keyCode == KEYS_RIGHT {
+		} else if tools.IndexOf(keyChar, this.KeysRight) != -1 {
 			this.InertialAlphaOffset += 0.01
-		} else if keyCode == KEYS_DOWN {
+		} else if tools.IndexOf(keyChar, this.KeysDown) != -1 {
 			this.InertialBetaOffset += 0.01
 		}
 	}

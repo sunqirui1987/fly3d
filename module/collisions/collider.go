@@ -1,9 +1,10 @@
 package collisions
 
 import (
+	"math"
+
 	. "github.com/suiqirui1987/fly3d/interfaces"
 	"github.com/suiqirui1987/fly3d/math32"
-	"math"
 )
 
 type ColliderResult struct {
@@ -33,6 +34,7 @@ type Collider struct {
 
 	_initialVelocity *math32.Vector3
 	_initialPosition *math32.Vector3
+	_checkMesh       IMesh
 }
 
 func NewCollider() *Collider {
@@ -60,6 +62,7 @@ func (this *Collider) Initialize(source *math32.Vector3, dir *math32.Vector3, e 
 
 	this.Epsilon = e
 	this.CollisionFound = false
+	this._checkMesh = nil
 }
 
 func checkPointInTriangle(point *math32.Vector3, pa *math32.Vector3, pb *math32.Vector3, pc *math32.Vector3, n *math32.Vector3) bool {
@@ -378,4 +381,13 @@ func (this *Collider) Collide(subMesh ISubMesh, pts []*math32.Vector3, indices [
 
 func (this *Collider) GetRadius() *math32.Vector3 {
 	return this.Radius
+}
+func (this *Collider) HasCollisionFound() bool {
+	return this.CollisionFound
+}
+func (this *Collider) SetMesh(val IMesh) {
+	this._checkMesh = val
+}
+func (this *Collider) GetMesh() IMesh {
+	return this._checkMesh
 }

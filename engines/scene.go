@@ -3,11 +3,11 @@ package engines
 import (
 	"math"
 
-	log "github.com/suiqirui1987/fly3d/tools/logrus"
 	"github.com/suiqirui1987/fly3d/core"
 	. "github.com/suiqirui1987/fly3d/interfaces"
 	"github.com/suiqirui1987/fly3d/math32"
 	"github.com/suiqirui1987/fly3d/tools"
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 )
 
 type ISceneDisposed interface {
@@ -167,7 +167,7 @@ func NewScene(engine *Engine) *Scene {
 	this.Layers = make([]ILayer, 0)
 
 	// Collisions
-	this.CollisionsEnabled = false
+	this.CollisionsEnabled = true
 	this.Gravity = math32.NewVector3(0, 0, -9)
 
 	// Animations

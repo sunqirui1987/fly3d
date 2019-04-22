@@ -1,8 +1,8 @@
 package windows
 
 import (
-	log "github.com/suiqirui1987/fly3d/tools/logrus"
 	"github.com/suiqirui1987/fly3d/tools/goevent"
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 
 	"github.com/suiqirui1987/fly3d/gl"
 	"github.com/suiqirui1987/fly3d/glfw"
@@ -220,7 +220,7 @@ func (this *App) _KeyCallback(w *glfw.Window, key glfw.Key, scancode int, action
 		this.Emit(Keydown, evt)
 	} else if action == glfw.Release {
 		//key up
-		this.Emit(Keydown, evt)
+		this.Emit(Keyup, evt)
 	}
 }
 

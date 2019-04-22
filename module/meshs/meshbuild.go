@@ -1,10 +1,11 @@
 package meshs
 
 import (
+	"math"
+
 	"github.com/suiqirui1987/fly3d/engines"
 	. "github.com/suiqirui1987/fly3d/interfaces"
 	"github.com/suiqirui1987/fly3d/math32"
-	"math"
 )
 
 func CreateBox(name string, size float32, scene *engines.Scene, updatable bool) *Mesh {
@@ -72,7 +73,7 @@ func CreateBox(name string, size float32, scene *engines.Scene, updatable bool) 
 	return box
 }
 
-func CreateSphere(name string, segments int, diameter int, scene *engines.Scene, updatable bool) *Mesh {
+func CreateSphere(name string, segments int, diameter float32, scene *engines.Scene, updatable bool) *Mesh {
 	sphere := NewMesh(name, scene)
 
 	var totalZRotationSteps, totalYRotationSteps, zRotationStep, yRotationStep, verticesCount uint16
