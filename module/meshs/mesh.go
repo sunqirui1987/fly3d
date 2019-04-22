@@ -66,6 +66,9 @@ type Mesh struct {
 	//cache
 	_cache           *MeshCache
 	_cache_positions []*math32.Vector3
+
+	//Animation Target
+	_animations []IAnimation
 }
 
 func NewMesh(name string, scene *engines.Scene) *Mesh {
@@ -566,8 +569,15 @@ func (this *Mesh) IntersectsPoint(point *math32.Vector3) bool {
 }
 
 //IAnimationTarget
+func (this *Mesh) AddAnimation(val IAnimation) {
+	if this._animations == nil {
+		this._animations = make([]IAnimation, 0)
+	}
+
+	this._animations = append(this._animations, val)
+}
 func (this *Mesh) GetAnimations() []IAnimation {
-	return nil
+	return this._animations
 }
 func (this *Mesh) GetAnimatables() []IAnimatable {
 	return nil

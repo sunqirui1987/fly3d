@@ -1,10 +1,14 @@
 package animations
 
 import (
+	"fmt"
+	"strconv"
+	"strings"
+
 	. "github.com/suiqirui1987/fly3d/interfaces"
 	"github.com/suiqirui1987/fly3d/math32"
+	log "github.com/suiqirui1987/fly3d/tools/logrus"
 	"github.com/suiqirui1987/fly3d/tools/reflections"
-	"fmt"
 )
 
 const (
@@ -18,21 +22,61 @@ const (
 	ANIMATIONLOOPMODE_CONSTANT = 2
 )
 
+func getFloat(unk interface{}) (float32, bool) {
+	switch i := unk.(type) {
+	case float64:
+		return float32(i), true
+	case float32:
+		return float32(i), true
+	case int64:
+		return float32(i), true
+	case int32:
+		return float32(i), true
+	case int16:
+		return float32(i), true
+	case int8:
+		return float32(i), true
+	case uint64:
+		return float32(i), true
+	case uint32:
+		return float32(i), true
+	case uint16:
+		return float32(i), true
+	case uint8:
+		return float32(i), true
+	case int:
+		return float32(i), true
+	case uint:
+		return float32(i), true
+	case string:
+		f, err := strconv.ParseFloat(i, 64)
+		if err != nil {
+			return 0, false
+		}
+		return float32(f), true
+	default:
+		return 0, false
+	}
+}
+
 type AnimationKeyFrame struct {
-	frame float32
-	value interface{} // Vector3 or Quaternion or Matrix or Float
+	Frame float32
+	Value interface{} // Vector3 or Quaternion or Matrix or Float
 }
 
 type Animation struct {
-	Name             string
-	TargetProperty   string
-	FramePerSecond   float32
-	DataType         int
-	LoopMode         int
-	CurrentFrame     float32
-	_keys            []*AnimationKeyFrame
-	_offsetsCache    map[string]interface{}
-	_highLimitsCache map[string]interface{}
+	Name string
+
+	FramePerSecond float32
+	DataType       int
+	LoopMode       int
+	CurrentFrame   float32
+
+	_targetProperty     string
+	_targetPropertyPath []string
+	_keys               []*AnimationKeyFrame
+	_offsetsCache       map[string]interface{}
+	_highLimitsCache    map[string]interface{}
 }
 
 //loopmodel = -1
@@ -44,9 +88,12 @@ func NewAnimation(name string, targetProperty string, framePerSecond float32, da
 }
 func (this *Animation) Init(name string, targetProperty string, framePerSecond float32, dataType int, loopMode int) {
 	this.Name = name
-	this.TargetProperty = targetProperty
+
 	this.FramePerSecond = framePerSecond
 	this.DataType = dataType
+
+	this._targetProperty = targetProperty
+	this._targetPropertyPath = strings.Split(targetProperty, ".")
 
 	if loopMode == -1 {
 		this.LoopMode = ANIMATIONLOOPMODE_CYCLE
@@ -63,7 +110,7 @@ func (this *Animation) Init(name string, targetProperty string, framePerSecond f
 
 // Methods
 func (this *Animation) Clone() *Animation {
-	clone := NewAnimation(this.Name, this.TargetProperty, this.FramePerSecond, this.DataType, this.LoopMode)
+	clone := NewAnimation(this.Name, this._targetProperty, this.FramePerSecond, this.DataType, this.LoopMode)
 
 	clone.SetKeys(this._keys)
 
@@ -82,10 +129,10 @@ func (this *Animation) _interpolate(currentFrame float32, repeatCount int, loopM
 		return highLimitValue_Obj
 	}
 	for key := 0; key < len(this._keys); key++ {
-		if this._keys[key+1].frame >= currentFrame {
-			startValue_obj := this._keys[key].value
-			endValue_obj := this._keys[key+1].value
-			gradient := (float32)(currentFrame-this._keys[key].frame) / (float32)(this._keys[key+1].frame-this._keys[key].frame)
+		if this._keys[key+1].Frame >= currentFrame {
+			startValue_obj := this._keys[key].Value
+			endValue_obj := this._keys[key+1].Value
+			gradient := (float32)(currentFrame-this._keys[key].Frame) / (float32)(this._keys[key+1].Frame-this._keys[key].Frame)
 			/*
 				if (this._easingFunction != nil) {
 							gradient = this._easingFunction.ease(gradient);
@@ -94,8 +141,16 @@ func (this *Animation) _interpolate(currentFrame float32, repeatCount int, loopM
 			switch this.DataType {
 			// Float
 			case ANIMATIONTYPE_FLOAT:
-				startValue, _ := startValue_obj.(float32)
-				endValue, _ := endValue_obj.(float32)
+				startValue, ok := getFloat(startValue_obj)
+				if !ok {
+					log.Printf("_interpolate The interface type is incorrect, request float32 ")
+					return 0.0
+				}
+				endValue, ok := getFloat(endValue_obj)
+				if !ok {
+					log.Printf("_interpolate The interface type is incorrect, request float32 ")
+					return 0.0
+				}
 
 				var offsetValue float32
 				if offsetValue_Obj != nil {
@@ -106,6 +161,7 @@ func (this *Animation) _interpolate(currentFrame float32, repeatCount int, loopM
 
 				switch loopMode {
 				case ANIMATIONLOOPMODE_CYCLE:
+					return startValue + (endValue-startValue)*gradient
 				case ANIMATIONLOOPMODE_CONSTANT:
 					return startValue + (endValue-startValue)*gradient
 				case ANIMATIONLOOPMODE_RELATIVE:
@@ -115,8 +171,17 @@ func (this *Animation) _interpolate(currentFrame float32, repeatCount int, loopM
 				// Quaternion
 			case ANIMATIONTYPE_QUATERNION:
 				var quaternion *math32.Quaternion
-				startValue, _ := startValue_obj.(*math32.Quaternion)
-				endValue, _ := endValue_obj.(*math32.Quaternion)
+				startValue, ok := startValue_obj.(*math32.Quaternion)
+				if !ok {
+					log.Printf("_interpolate The interface type is incorrect, request Quaternion ")
+					return math32.NewQuaternionZero()
+				}
+				endValue, ok := endValue_obj.(*math32.Quaternion)
+				if !ok {
+					log.Printf("_interpolate The interface type is incorrect, request Quaternion ")
+					return math32.NewQuaternionZero()
+				}
+
 				var offsetValue *math32.Quaternion
 				if offsetValue_Obj != nil {
 					offsetValue, _ = offsetValue_Obj.(*math32.Quaternion)
@@ -125,6 +190,7 @@ func (this *Animation) _interpolate(currentFrame float32, repeatCount int, loopM
 				}
 				switch loopMode {
 				case ANIMATIONLOOPMODE_CYCLE:
+					quaternion = startValue.Slerp(endValue, gradient)
 				case ANIMATIONLOOPMODE_CONSTANT:
 					quaternion = startValue.Slerp(endValue, gradient)
 					break
@@ -137,8 +203,16 @@ func (this *Animation) _interpolate(currentFrame float32, repeatCount int, loopM
 			// Vector3
 			case ANIMATIONTYPE_VECTOR3:
 
-				startValue, _ := startValue_obj.(*math32.Vector3)
-				endValue, _ := endValue_obj.(*math32.Vector3)
+				startValue, ok := startValue_obj.(*math32.Vector3)
+				if !ok {
+					log.Printf("_interpolate The interface type is incorrect, request Quaternion ")
+					return math32.NewVector3Zero()
+				}
+				endValue, ok := endValue_obj.(*math32.Vector3)
+				if !ok {
+					log.Printf("_interpolate The interface type is incorrect, request Quaternion ")
+					return math32.NewVector3Zero()
+				}
 
 				var offsetValue *math32.Vector3
 				if offsetValue_Obj != nil {
@@ -148,6 +222,7 @@ func (this *Animation) _interpolate(currentFrame float32, repeatCount int, loopM
 				}
 				switch loopMode {
 				case ANIMATIONLOOPMODE_CYCLE:
+					return startValue.Lerp(endValue, gradient)
 				case ANIMATIONLOOPMODE_CONSTANT:
 					return startValue.Lerp(endValue, gradient)
 				case ANIMATIONLOOPMODE_RELATIVE:
@@ -161,7 +236,7 @@ func (this *Animation) _interpolate(currentFrame float32, repeatCount int, loopM
 		}
 	}
 
-	return this._keys[len(this._keys)-1].value
+	return this._keys[len(this._keys)-1].Value
 }
 
 //interface
@@ -172,16 +247,20 @@ type IAnimation interface {
 */
 func (this *Animation) Animate(target IAnimationTarget, delay float32, from float32, to float32, loop bool, speedRatio float32) bool {
 
-	if this.TargetProperty == "" {
+	if this._targetProperty == "" || len(this._targetPropertyPath) < 1 {
+		return false
+	}
+
+	if len(this._keys) == 0 {
 		return false
 	}
 
 	// Check limits
-	if from < this._keys[0].frame || from > this._keys[len(this._keys)-1].frame {
-		from = this._keys[0].frame
+	if from < this._keys[0].Frame || from > this._keys[len(this._keys)-1].Frame {
+		from = this._keys[0].Frame
 	}
-	if to < this._keys[0].frame || to > this._keys[len(this._keys)-1].frame {
-		to = this._keys[len(this._keys)-1].frame
+	if to < this._keys[0].Frame || to > this._keys[len(this._keys)-1].Frame {
+		to = this._keys[len(this._keys)-1].Frame
 	}
 
 	// Compute ratio
@@ -236,7 +315,26 @@ func (this *Animation) Animate(target IAnimationTarget, delay float32, from floa
 	currentValue := this._interpolate(currentFrame, repeatCount, this.LoopMode, offsetValue, highLimitValue)
 
 	// Set value
-	reflections.SetField(target, this.TargetProperty, currentValue)
+	if len(this._targetPropertyPath) > 1 {
+		property, err := reflections.GetField(target, this._targetPropertyPath[0])
+		if err != nil {
+			log.Printf("Animate reflections.GetField %s", property)
+			return false
+		}
+
+		for index := 1; index < len(this._targetPropertyPath)-1; index++ {
+			property, err = reflections.GetField(property, this._targetPropertyPath[index])
+			if err != nil {
+				log.Printf("Animate reflections.GetField %s", property)
+				return false
+			}
+		}
+
+		valname := this._targetPropertyPath[len(this._targetPropertyPath)-1]
+		reflections.SetField(property, valname, currentValue)
+	} else {
+		reflections.SetField(target, this._targetProperty, currentValue)
+	}
 
 	return true
 }

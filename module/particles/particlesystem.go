@@ -1,6 +1,9 @@
 package particles
 
 import (
+	"math/rand"
+	"strings"
+
 	"github.com/suiqirui1987/fly3d/core"
 	"github.com/suiqirui1987/fly3d/engines"
 	"github.com/suiqirui1987/fly3d/gl"
@@ -8,8 +11,6 @@ import (
 	"github.com/suiqirui1987/fly3d/math32"
 	"github.com/suiqirui1987/fly3d/module/effects"
 	"github.com/suiqirui1987/fly3d/tools"
-	"math/rand"
-	"strings"
 )
 
 func randomNumber(min float32, max float32) float32 {
@@ -89,6 +90,7 @@ type ParticleSystem struct {
 
 func NewParticleSystem(name string, capacity int, scene *engines.Scene) *ParticleSystem {
 	this := &ParticleSystem{}
+
 	this.Name = name
 	this.Id = name
 	this.Capacity = capacity
@@ -96,6 +98,8 @@ func NewParticleSystem(name string, capacity int, scene *engines.Scene) *Particl
 	this._scene = scene
 
 	this._scene.ParticleSystems = append(this._scene.ParticleSystems, this)
+
+	this.Init()
 
 	return this
 }
@@ -171,6 +175,7 @@ func (this *ParticleSystem) Init() {
 	this._colorDiff = math32.NewColor4(0, 0, 0, 0)
 	this._scaledDirection = math32.NewVector3Zero()
 	this._scaledGravity = math32.NewVector3Zero()
+
 }
 
 func (this *ParticleSystem) IsAlive() bool {
@@ -275,6 +280,7 @@ func (this *ParticleSystem) _update(newParticles int) {
 
 func (this *ParticleSystem) _getEffect() IEffect {
 	defines := make([]string, 0)
+	defines = append(defines, "#define EMPTYDEFINED")
 
 	if core.GlobalFly3D.ClipPlane != nil {
 		defines = append(defines, "#define CLIPPLANE")
@@ -302,12 +308,15 @@ func (this *ParticleSystem) Animate() {
 	}
 
 	effect := this._getEffect()
+	if effect == nil {
+		return
+	}
 
 	// Check
-	if this.Emitter != nil ||
+	if this.Emitter == nil ||
 		!effect.IsReady() ||
-		this.ParticleTexture != nil ||
-		this.ParticleTexture.IsReady() {
+		this.ParticleTexture == nil ||
+		!this.ParticleTexture.IsReady() {
 		return
 	}
 
@@ -355,6 +364,9 @@ func (this *ParticleSystem) Animate() {
 			}
 		}
 	}
+	if len(this.Particles) == 0 {
+		return
+	}
 
 	// Update VBO
 	offset := 0
@@ -385,10 +397,10 @@ func (this *ParticleSystem) Render() int {
 	effect := this._getEffect()
 
 	// Check
-	if this.Emitter != nil ||
+	if this.Emitter == nil ||
 		!effect.IsReady() ||
-		this.ParticleTexture != nil ||
-		this.ParticleTexture.IsReady() {
+		this.ParticleTexture == nil ||
+		!this.ParticleTexture.IsReady() {
 		return 0
 	}
 	engine := this._scene.GetEngine()

@@ -280,7 +280,7 @@ func (this *Scene) RemovePendingData(url string) {
 
 func (this *Scene) _animate() {
 	for index := 0; index < len(this.ActiveAnimatables); index++ {
-		if this.ActiveAnimatables[index].Animate() {
+		if !this.ActiveAnimatables[index].Animate() {
 
 			this.ActiveAnimatables = append(this.ActiveAnimatables[:index], this.ActiveAnimatables[index+1:]...)
 			index--
@@ -492,7 +492,7 @@ func (this *Scene) LocalRender(opaqueSubMeshes []ISubMesh, alphaTestSubMeshes []
 		particleSystem := this._activeParticleSystems[particleIndex]
 		emitter := particleSystem.GetEmitter()
 		if (emitter != nil && emitter.GetPosition() == nil) ||
-			(activeMeshes != nil) ||
+			(activeMeshes == nil) ||
 			(tools.IndexOf(emitter, activeMeshes) != -1) {
 			this._activeParticles += particleSystem.Render()
 		}

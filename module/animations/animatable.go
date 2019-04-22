@@ -2,7 +2,7 @@ package animations
 
 import (
 	. "github.com/suiqirui1987/fly3d/interfaces"
-	"time"
+	"github.com/suiqirui1987/fly3d/tools"
 )
 
 type Animatable struct {
@@ -12,7 +12,7 @@ type Animatable struct {
 	ToFrame   float32
 
 	LoopAnimation        bool
-	AnimationStartedDate int64
+	AnimationStartedDate int
 
 	SpeedRatio float32
 }
@@ -34,7 +34,7 @@ func (this *Animatable) Init(target IAnimationTarget, from float32, to float32, 
 	this.LoopAnimation = loop
 	this.SpeedRatio = speedRatio
 
-	this.AnimationStartedDate = time.Now().Unix()
+	this.AnimationStartedDate = tools.GetCurrentTimeMs()
 
 }
 
@@ -53,7 +53,7 @@ func (this *Animatable) Animate() bool {
 
 	//Getting time
 	var delay float32
-	delay = (float32)(time.Now().Unix() - this.AnimationStartedDate)
+	delay = (float32)(tools.GetCurrentTimeMs() - this.AnimationStartedDate)
 
 	// Animating
 	running := false
