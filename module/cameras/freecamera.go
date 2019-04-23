@@ -58,10 +58,10 @@ func NewFreeCamera(name string, position *math32.Vector3, scene *engines.Scene) 
 		this._scene.ActiveCamera = this
 	}
 
-	this.KeysUp = []string{"UP"}
-	this.KeysDown = []string{"DOWN"}
-	this.KeysLeft = []string{"LEFT"}
-	this.KeysRight = []string{"RIGHT"}
+	this.KeysUp = []string{"UP", "W"}
+	this.KeysDown = []string{"DOWN", "S"}
+	this.KeysLeft = []string{"LEFT", "A"}
+	this.KeysRight = []string{"RIGHT", "D"}
 
 	return this
 
