@@ -9,4 +9,4 @@
   2.架构图
 
 
-![3dengine]( https://github.com/suiqirui1987/fly3d/doc/3dengine.png)
+![3dengine](https://raw.githubusercontent.com/suiqirui1987/fly3d/master/doc/3dengine.png)
