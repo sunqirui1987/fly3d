@@ -590,6 +590,9 @@ func (this *Engine) GetAlphaTesting() bool {
 }
 
 func (this *Engine) WipeCaches() {
+	//Cache
+
+	this._loadedTexturesCache = make([]*gl.GLTextureBuffer, 0)
 	this._activeTexturesCache = make([]*gl.GLTextureBuffer, 0)
 	this._currentEffect = nil
 	this._currentState = &gl.GLCullState{
