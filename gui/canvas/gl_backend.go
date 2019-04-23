@@ -574,6 +574,7 @@ func (p *glParams) renderFlush() {
 		c.stencilFuncRef = 0
 		c.stencilFuncMask = 0xffffffff
 		b := castFloat32ToByte(c.vertexes)
+
 		//dumpLog("vertex:", c.vertexes)
 		// Upload vertex data
 		gl.BindBuffer(gl.ARRAY_BUFFER, c.vertexBuffer)
@@ -606,10 +607,11 @@ func (p *glParams) renderFlush() {
 		gl.DisableVertexAttribArray(c.shader.vertexAttrib)
 		gl.DisableVertexAttribArray(c.shader.tcoordAttrib)
 		gl.Disable(gl.CULL_FACE)
-		gl.DeleteBuffer(c.vertexBuffer)
+		gl.Disable(gl.BLEND)
 		gl.BindBuffer(gl.ARRAY_BUFFER, gl.Buffer{})
 		gl.UseProgram(gl.Program{})
 		c.bindTexture(nil)
+
 	}
 	c.vertexes = c.vertexes[:0]
 	c.paths = c.paths[:0]

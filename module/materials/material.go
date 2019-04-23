@@ -37,7 +37,7 @@ func (this *Material) Init() {
 }
 
 func (this *Material) BaseDispose() {
-	index := tools.IndexOf(this._scene.Materials, this)
+	index := tools.IndexOf(this, this._scene.Materials)
 	if index == -1 {
 		return
 	}

@@ -124,7 +124,7 @@ func (this *BaseTexture) Dispose() {
 	this.ReleaseGLTexture()
 
 	// Remove from scene
-	index := tools.IndexOf(this._scene.Textures, this)
+	index := tools.IndexOf(this, this._scene.Textures)
 	if index > -1 {
 		this._scene.Textures = append(this._scene.Textures[:index], this._scene.Textures[index+1:]...)
 	}

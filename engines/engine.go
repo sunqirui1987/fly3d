@@ -884,8 +884,10 @@ func (this *Engine) ReleaseTexture(texture *gl.GLTextureBuffer) {
 		gl.ActiveTexture((gl.Enum)(val))
 		gl.BindTexture(gl.TEXTURE_2D, gl.Texture{})
 		gl.BindTexture(gl.TEXTURE_CUBE_MAP, gl.Texture{})
-		this._activeTexturesCache[channel] = nil
+
 	}
+
+	this._activeTexturesCache = make([]*gl.GLTextureBuffer, 0)
 
 }
 
