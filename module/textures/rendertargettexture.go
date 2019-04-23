@@ -120,7 +120,7 @@ func (this *RenderTargetTexture) Render() {
 		scene.LocalRender(this._opaqueSubMeshes, this._alphaTestSubMeshes, this._transparentSubMeshes, this._renderList)
 	}
 	// Unbind
-	//engine.UnBindFramebuffer(this._texture)
+	engine.UnBindFramebuffer(this._texture)
 
 	if this.OnAfterRender != nil {
 		this.OnAfterRender()

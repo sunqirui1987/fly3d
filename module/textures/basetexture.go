@@ -96,7 +96,7 @@ func (this *BaseTexture) ReleaseGLTexture() {
 
 	// Final reference
 	if this._texture.References == 0 {
-		index := tools.IndexOf(this._scene.Textures, texturesCache)
+		index := tools.IndexOf(this._texture, texturesCache)
 		if index > -1 {
 			texturesCache = append(texturesCache[:index], texturesCache[index+1:]...)
 		}

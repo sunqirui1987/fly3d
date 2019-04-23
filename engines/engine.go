@@ -111,7 +111,7 @@ func NewEngine(canvas windows.IWindow, antialias bool) *Engine {
 		that.IsFullscreen = that._renderingCanvas.GetFullscreen()
 		return nil
 	})
-	this._renderingCanvas.On(windows.Resize, func(evt windows.ResizeEvent) error {
+	this._renderingCanvas.On(windows.Resize, func(evt *windows.ResizeEvent) error {
 		this._aspectRatio = (float32)(this._renderingCanvas.GetRenderWidth()) / (float32)(this._renderingCanvas.GetRenderHeight())
 		return nil
 	})
