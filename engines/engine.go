@@ -151,6 +151,13 @@ func (this *Engine) GetCaps() *EngineCaps {
 	return this._caps
 }
 
+func (this *Engine) PauseRenderLoop() {
+	this._runningLoop = false
+}
+func (this *Engine) RestoreRenderLoop() {
+	this._runningLoop = true
+}
+
 //
 func (this *Engine) StopRenderLoop() {
 	this._renderFunction = nil

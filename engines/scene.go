@@ -616,6 +616,7 @@ func (this *Scene) Dispose() {
 	this.BeforeRender = nil
 	this.AfterRender = nil
 
+	log.Println("Detach cameras")
 	// Detach cameras
 	canvas := this._engine.GetRenderingCanvas()
 	var index int
@@ -623,43 +624,56 @@ func (this *Scene) Dispose() {
 		this.Cameras[index].DetachControl(canvas)
 	}
 
+	log.Println("Release meshes")
 	// Release meshes
 	for _, m := range this.Meshes {
 		m.Dispose()
 	}
+	this.Meshes = make([]IMesh, 0)
 
+	log.Println("Release materials")
 	// Release materials
 	for _, m := range this.Materials {
 		m.Dispose()
 	}
+	this.Materials = make([]IMaterial, 0)
 
+	log.Println("Release particles")
 	// Release particles
 	for _, m := range this.ParticleSystems {
 		m.Dispose()
 	}
+	this.ParticleSystems = make([]IParticleSystem, 0)
 
+	log.Println("Release sprites")
 	// Release sprites
-
 	for _, m := range this.SpriteManagers {
 		m.Dispose()
 	}
+	this.SpriteManagers = make([]ISpriteManager, 0)
 
+	log.Println("Release layers")
 	// Release layers
 	for _, m := range this.Layers {
 		m.Dispose()
 	}
+	this.Layers = make([]ILayer, 0)
 
+	log.Println("Release textures")
 	// Release textures
 	for _, m := range this.Textures {
 		m.Dispose()
 	}
+	this.Textures = make([]ITexture, 0)
 
+	log.Println("Remove from engine")
 	// Remove from engine
 	index = tools.IndexOf(this, this._engine.Scenes)
 	if index > -1 {
 		this._engine.Scenes = append(this._engine.Scenes[:index], this._engine.Scenes[index+1:]...)
 	}
 
+	log.Println("engine.WipeCaches")
 	this._engine.WipeCaches()
 }
 

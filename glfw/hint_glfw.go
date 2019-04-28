@@ -1,4 +1,5 @@
-// +build !js
+// +build darwin,!arm,!arm64 linux windows
+// +build !ios,!android,!js,!sdl,!headless,!vulkan
 
 package glfw
 
